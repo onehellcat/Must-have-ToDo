@@ -1,7 +1,5 @@
 <h1 align="center" id="title">Must have ToDo</h1>
 
-<p align="center"><img src="" alt="project-image"></p>
-
 <p id="description">This is my "basic" todo because it's a must have but with drag and drop</p>
 
 <h2>🚀 Demo</h2>
