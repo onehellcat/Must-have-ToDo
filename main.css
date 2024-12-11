@@ -1,0 +1,228 @@
+/* General Body Styling */
+body {
+  padding: 20px;
+  background-color: #f5f5f5;
+  font-family: "Roboto", sans-serif;
+}
+
+/* Card Container */
+.card-container {
+  margin: 0 auto;
+  max-width: 600px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+/* Heading */
+h3 {
+  text-align: center;
+  color: #333;
+}
+
+/* Task Item Styling */
+.task-item {
+  background-color: #fafafa;
+  position: relative;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  word-wrap: break-word;
+  overflow: hidden;
+  min-height: 70px;
+  flex-direction: column;
+}
+
+/* Text Styling */
+.task-item .task-text {
+  width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  margin-bottom: 10px;
+}
+
+.task-item .task-text div {
+  margin-bottom: 5px;
+}
+
+.task-item .task-text .title {
+  font-weight: bold;
+  font-size: 16px;
+  color: #333;
+}
+
+.task-item .task-text .description {
+  font-size: 14px;
+  color: #666;
+  border-top: 1px solid #ddd;
+  padding-top: 5px;
+}
+
+/* Button Container */
+.task-item .button-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.task-item button {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+  height: 40px;
+}
+
+/* Button Styles */
+.task-item button.done-btn {
+  background-color: #42a5f5; 
+  color: #e3f2fd;
+}
+
+.task-item button.done-btn:hover {
+  background-color: #1976d2; 
+}
+
+.task-item button.delete-btn {
+  background-color: #f8bcbc;
+  color: #d32f2f;
+}
+
+.task-item button.delete-btn:hover {
+  background-color: #ef9a9a;
+}
+
+.task-item button:hover {
+  opacity: 0.8;
+  transform: translateY(-2px);
+}
+
+/* Input Field */
+.input-field input {
+  margin-bottom: 10px;
+}
+
+/* Toast */
+.toast {
+  background-color: #ff5252;
+}
+
+/* Add Task Button Styling */
+.add-task-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Priority Color Classes */
+.task-item.priority-high {
+  background-color: #ffebee;
+  border-left: 5px solid #e57373; 
+}
+
+.task-item.priority-medium {
+  background-color: #fffde7; 
+  border-left: 5px solid #ffeb3b; 
+}
+
+.task-item.priority-low {
+  background-color: #e0f2f1; 
+  border-left: 5px solid #4caf50; 
+}
+
+.task-item.priority-default {
+  background-color: #fafafa; 
+  border-left: 5px solid #ccc; 
+}
+
+/* Dropdown Menu Styling */
+.task-item .dropdown-content {
+  min-width: 130px; 
+min-height: fit-content;
+  display: none; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  background-color: #ffffff; 
+  border-radius: 5px;
+  padding: 0; 
+}
+
+/* Dropdown List Items */
+.task-item .dropdown-content li {
+  font-size: 14px; 
+  margin: 0; 
+}
+
+/* Dropdown Item Links */
+.task-item .dropdown-content li a {
+  color: #333; 
+  display: block; 
+  text-decoration: none; 
+  font-size: 14px;
+}
+
+/* Hover Effect for Dropdown Items */
+.task-item .dropdown-content li a:hover {
+  background-color: #f0f0f0; 
+}
+
+/* Ensure dropdown shows when hovering over the button */
+.task-item .dropdown-trigger:hover + .dropdown-content {
+  display: block;
+}
+
+/* Priority High Style for Dropdown */
+.task-item .dropdown-content li.high-priority a {
+  background-color: #ffebee; 
+  color: #d32f2f; 
+}
+
+/* Priority Medium Style for Dropdown */
+.task-item .dropdown-content li.medium-priority a {
+  background-color: #fffde7;
+  color: #f57f17; 
+}
+
+/* Priority Low Style for Dropdown */
+.task-item .dropdown-content li.low-priority a {
+  background-color: #e0f2f1; 
+  color: #00796b; 
+}
+
+/* Enhanced Dragging Styles */
+.dragging {
+  opacity: 0.8;
+  transform: scale(1.02);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  pointer-events: none;  /* Disable pointer events while dragging */
+}
+
+/* Drop Target Styles */
+.drop-target {
+  border: 2px dashed #42a5f5;
+  transition: background-color 0.2s;
+  cursor: grab !important;
+}
+
+/* Prevents drag target elements (buttons, text) from being highlighted */
+.task-item .button-container,
+.task-item .task-text,
+.task-item .title {
+  pointer-events: auto; /* Re-enable pointer events to make buttons clickable */
+}
+
+/* Ensure buttons inside .button-container can still be interacted with */
+.task-item .button-container button {
+  pointer-events: auto; /* Make sure buttons are clickable during drag */
+}

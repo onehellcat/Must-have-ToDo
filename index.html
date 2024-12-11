@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive To-Do List with Drag-and-Drop</title>
+
+    <!-- Materialize CSS -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+      rel="stylesheet" />
+
+    <!-- Material Icons -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet" />
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="main.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="card-container">
+        <h3>Must have To-Do List</h3>
+
+        <!-- Task input form -->
+        <div class="row">
+          <div class="input-field col s12 m6">
+            <input id="taskTitle" type="text" />
+            <label for="taskTitle">Task Title</label>
+          </div>
+          <div class="input-field col s12 m6">
+            <input id="taskDescription" type="text" />
+            <label for="taskDescription">Task Description</label>
+          </div>
+        </div>
+
+        <!-- Centered Add Task button -->
+        <div class="add-task-btn-container">
+          <button id="addTaskButton" class="btn waves-effect waves-light blue">
+            <i class="material-icons left">add_circle</i> Add Task
+          </button>
+        </div>
+
+        <!-- Task list -->
+        <ul id="taskList"></ul>
+      </div>
+    </div>
+
+    <!-- Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var dropdownElems = document.querySelectorAll(".dropdown-trigger");
+        M.Dropdown.init(dropdownElems, { constrainWidth: false });
+      });
+
+      let tasks = [];
+
+      class Task {
+        constructor(title, description) {
+          this.title = title;
+          this.description = description;
+          this.isDone = false;
+          this.priority = "Default"; // Default priority
+        }
+
+        markDone() {
+          this.isDone = true;
+        }
+
+        unmarkDone() {
+          this.isDone = false;
+        }
+
+        setPriority(priority) {
+          this.priority = priority;
+        }
+      }
+
+      // Add task to list
+      function addTask() {
+        const titleInput = document.getElementById("taskTitle");
+        const descriptionInput = document.getElementById("taskDescription");
+
+        const title = titleInput.value.trim();
+        const description = descriptionInput.value.trim();
+
+        if (title && description) {
+          const task = new Task(title, description);
+          tasks.push(task);
+          renderTasks();
+          titleInput.value = "";
+          descriptionInput.value = "";
+        } else {
+          M.toast({
+            html: '<i class="material-icons left">error</i> Please fill in both fields!',
+            classes: "red",
+          });
+        }
+      }
+
+      // Toggle task completion
+      function toggleTaskDone(index) {
+        const task = tasks[index];
+        task.isDone ? task.unmarkDone() : task.markDone();
+        renderTasks();
+      }
+
+      // Delete task
+      function deleteTask(index) {
+        tasks.splice(index, 1);
+        renderTasks();
+      }
+
+      // Set task priority and re-render tasks
+      function setTaskPriority(index, priority) {
+        tasks[index].setPriority(priority);
+        renderTasks();
+      }
+
+      // Handle dragging start and store the dragged item’s index
+      let draggedIndex = null;
+
+      // Start dragging
+      function handleDragStart(e, index) {
+        draggedIndex = index;
+        e.dataTransfer.effectAllowed = "move";
+        e.target.classList.add("dragging");
+      }
+
+      // End dragging
+      function handleDragEnd(e) {
+        e.target.classList.remove("dragging");
+      }
+
+      // Highlight the <li> when dragging over it
+      function handleDragOver(e) {
+        e.preventDefault();
+
+        // Ensure that we only highlight the <li> with the class "task-item"
+        const listItem = e.target.closest("li.task-item");
+
+        // Only apply the highlight if the event target is the task-item <li> itself
+        if (listItem && !listItem.classList.contains("dragging")) {
+          listItem.classList.add("drop-target");
+        }
+      }
+
+      // Remove the highlight when dragging leaves
+      function handleDragLeave(e) {
+        const listItem = e.target.closest("li.task-item");
+        if (listItem) {
+          listItem.classList.remove("drop-target");
+        }
+      }
+
+      // Handle drop to reorder tasks
+      function handleDrop(e, index) {
+        e.preventDefault();
+
+        const draggedTask = tasks[draggedIndex];
+        tasks.splice(draggedIndex, 1); // Remove the dragged task from its original position
+        tasks.splice(index, 0, draggedTask); // Insert it at the new position
+        renderTasks(); // Re-render the task list to reflect the change
+      }
+
+      // Render tasks with priority colors and drag-drop events
+      function renderTasks() {
+        const taskList = document.getElementById("taskList");
+        taskList.innerHTML = "";
+
+        tasks.forEach((task, index) => {
+          const taskElement = document.createElement("li");
+          taskElement.classList.add("task-item");
+
+          // Add priority classes
+          if (task.priority === "High")
+            taskElement.classList.add("priority-high");
+          else if (task.priority === "Medium")
+            taskElement.classList.add("priority-medium");
+          else if (task.priority === "Low")
+            taskElement.classList.add("priority-low");
+
+          // Add completed task styling
+          if (task.isDone) taskElement.classList.add("completed");
+
+          const taskTextContainer = document.createElement("div");
+          taskTextContainer.classList.add("task-text");
+
+          const taskTitle = document.createElement("div");
+          taskTitle.classList.add("title");
+          taskTitle.textContent = task.title;
+
+          const taskDescription = document.createElement("div");
+          taskDescription.classList.add("description");
+          taskDescription.textContent = task.description;
+
+          taskTextContainer.appendChild(taskTitle);
+          taskTextContainer.appendChild(taskDescription);
+
+          const buttonContainer = document.createElement("div");
+          buttonContainer.classList.add("button-container");
+
+          // Done Button
+          const toggleButton = document.createElement("button");
+          toggleButton.classList.add(
+            "btn",
+            "waves-effect",
+            "waves-light",
+            "done-btn"
+          );
+          toggleButton.innerHTML = task.isDone
+            ? `<i class="material-icons">undo</i>`
+            : `<i class="material-icons">check_circle</i>`;
+          toggleButton.onclick = (e) => {
+            e.stopPropagation();
+            toggleTaskDone(index);
+          };
+
+          // Delete Button
+          const deleteButton = document.createElement("button");
+          deleteButton.classList.add(
+            "btn",
+            "waves-effect",
+            "waves-light",
+            "delete-btn"
+          );
+          deleteButton.innerHTML = `<i class="material-icons">delete</i>`;
+          deleteButton.onclick = (e) => {
+            e.stopPropagation();
+            deleteTask(index);
+          };
+
+          // Priority Dropdown Button
+          const dropdownButton = document.createElement("button");
+          dropdownButton.classList.add(
+            "btn",
+            "dropdown-trigger",
+            "waves-effect",
+            "waves-light",
+            "options-btn"
+          );
+          dropdownButton.setAttribute("data-target", `dropdown-${index}`);
+          dropdownButton.innerHTML = `<i class="material-icons">priority_high</i>`;
+
+          // Priority Dropdown Content
+          const dropdownContent = document.createElement("ul");
+          dropdownContent.classList.add("dropdown-content");
+          dropdownContent.setAttribute("id", `dropdown-${index}`);
+
+          const priorities = ["High", "Medium", "Low"];
+          priorities.forEach((priority) => {
+            const priorityItem = document.createElement("li");
+            priorityItem.innerHTML = `<a href="#!" onclick="setTaskPriority(${index}, '${priority}')">${priority}</a>`;
+            dropdownContent.appendChild(priorityItem);
+          });
+
+          // Add drag-and-drop attributes
+          taskElement.draggable = true;
+          taskElement.ondragstart = (e) => handleDragStart(e, index);
+          taskElement.ondragend = handleDragEnd;
+          taskElement.ondragover = handleDragOver;
+          taskElement.ondragleave = handleDragLeave;
+          taskElement.ondrop = (e) => handleDrop(e, index);
+
+          // Append elements
+          buttonContainer.appendChild(toggleButton);
+          buttonContainer.appendChild(deleteButton);
+          buttonContainer.appendChild(dropdownButton);
+          taskElement.appendChild(taskTextContainer);
+          taskElement.appendChild(buttonContainer);
+          taskElement.appendChild(dropdownContent);
+          taskList.appendChild(taskElement);
+        });
+
+        // Reinitialize dropdowns after tasks are re-rendered
+        M.Dropdown.init(document.querySelectorAll(".dropdown-trigger"), {
+          constrainWidth: false,
+        });
+      }
+
+      //  Event listener to add task button
+      document.getElementById("addTaskButton").onclick = addTask;
+    </script>
+  </body>
+</html>
